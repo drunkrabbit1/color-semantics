@@ -129,7 +129,7 @@ class AlgorithmService extends BaseAlgorithmService
      */
     private function miss($algorithm): ?int
     {
-        if ($this->conceptsColumn->count() == 1)
+        if ($this->concepts->count() == 1)
             return (int) $algorithm->get('point');
 
         $this->status = false;
@@ -139,7 +139,7 @@ class AlgorithmService extends BaseAlgorithmService
     private function multiplied($algorithm): float|int
     {
 //        dd($this->algorithms);
-        if (true or $this->status) {
+        if ($this->status) {
             // сумма всех алгоритмов, которые есть в концепции
 //            dd($this->mainAlgorithm, 'adas');
 
@@ -155,21 +155,15 @@ class AlgorithmService extends BaseAlgorithmService
 //                ->where('type', AlgorithmType::IN_GROUP)
 //                ->get();
 
-//            if ($algorithm->point == 1) dd($algorithm, $this->status);
-
             if ($algorithm->get('point') == 0) {
-//                dd(1);
                 $algorithm = $this->algorithms
                     ->where('type', AlgorithmType::IN_GROUP)
                     ->firstWhere('point');
 
                 $point = $algorithm->get('point') * ($this->concepts->count() - 1);
             } else {
-//                dd(2);
-//                dd($algorithm->point);
                 $point = $algorithm->get('point') * $this->concepts->count();
             }
-//            $this->addConceptInfo($algorithm);
             return (int) $point;
         }
 
