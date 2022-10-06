@@ -8,7 +8,7 @@ class MathService
 {
     public static function standardDeviation (array|Collection $list): float
     {
-        if (is_array($list)) $list = collect($list);
+        if (is_array($list)) $list = Collection::make($list);
 
         $average = $list->average();
 

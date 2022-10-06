@@ -7,6 +7,7 @@ use Drabbit\ColorSemantics\Models\Results\ResultConceptPivot;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 /**
  * @property $id
@@ -14,12 +15,12 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Color extends \Drabbit\ColorSemantics\Models\Color
 {
-    public function concepts()
+    /**
+     * @return BelongsToMany
+     */
+    public function concepts(): BelongsToMany
     {
         return $this->belongsToMany(Concept::class, ResultConceptPivot::class,
-            'color_id', 'concept_id')
-//            ->where('result_concept_pivot.result_id', $this->result_id)
-//        ->whereRaw('result_concept_pivot.result_id = colors.result_id')
-            ;
+            'color_id', 'concept_id');
     }
 }

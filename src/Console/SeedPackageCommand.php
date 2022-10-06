@@ -6,8 +6,13 @@ use Database\Seeders\AlgorithmSeeder;
 use Database\Seeders\ColorSeeder;
 use Database\Seeders\ConceptSeeder;
 use Illuminate\Console\Command;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Artisan;
 
+/**
+ * Комманда создает Сиды в новом проекте, с базовыми данными, для работы с проектом
+ *
+ */
 class SeedPackageCommand extends Command
 {
     protected $signature = 'color-semantics:seed';
@@ -18,17 +23,18 @@ class SeedPackageCommand extends Command
         ConceptSeeder::class
     ];
 
-    public static $group = 'cs-seeds';
+    public static $group = 'cs-upload-seeds';
 
     public function handle()
     {
+        // публикуем сиды
         Artisan::call('vendor:publish --tag=' . self::$group);
 
-        collect([
+        Collection::make([
             // ..
         ])->each(fn($table) => \DB::table($table)->truncate());
 
-        collect(self::$calls)->each(function ($class) {
+        Collection::make(self::$calls)->each(function ($class) { // Запускаем сиды
             $basename = class_basename($class);
             $this->info("seeding $basename");
             Artisan::call('db:seed --class=' . $basename);

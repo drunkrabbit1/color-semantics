@@ -8,8 +8,8 @@ use Drabbit\ColorSemantics\Models\Results\Result;
 use Drabbit\ColorSemantics\Models\Results\ResultConceptPivot;
 use Drabbit\ColorSemantics\Models\Tests\Test;
 use Drabbit\ColorSemantics\Models\Tests\TestConceptPivot;
+use Drabbit\ColorSemantics\Traits\HasUuids;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -38,7 +38,7 @@ class Concept extends Model
         'selection_time' => 'datetime:H:i:s.000'
     ];
 
-    public function resultConceptPivot()
+    public function resultConceptPivot(): BelongsToMany
     {
         return $this->belongsToMany(Result::class, ResultConceptPivot::class);
     }

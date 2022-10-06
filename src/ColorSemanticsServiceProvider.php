@@ -8,6 +8,7 @@ use Database\Seeders\ConceptSeeder;
 use Drabbit\ColorSemantics\Console\SeedPackageCommand;
 use Drabbit\ColorSemantics\Providers\CommandsServiceProvider;
 use Drabbit\ColorSemantics\Providers\EventServiceProvider;
+use Illuminate\Support\Collection;
 use Illuminate\Support\ServiceProvider;
 
 class ColorSemanticsServiceProvider extends ServiceProvider
@@ -44,7 +45,7 @@ class ColorSemanticsServiceProvider extends ServiceProvider
             /*$this->publishes([
                 __DIR__.'/../resources/lang' => resource_path('lang/vendor/color-semantics'),
             ], 'lang');*/
-//            dd(collect([
+//            dd(Collection::make([
 //                AlgorithmSeeder::class,
 //                ColorSeeder::class,
 //                ConceptSeeder::class
@@ -54,7 +55,7 @@ class ColorSemanticsServiceProvider extends ServiceProvider
 //                    __DIR__ . "\..\database\seeders\\$basename.php" => database_path("seeders\\$basename.php"),
 //                ];
 //            })->collapse()->toArray());
-            $this->publishes(collect(SeedPackageCommand::$calls)->map(function ($class) {
+            $this->publishes(Collection::make(SeedPackageCommand::$calls)->map(function ($class) {
                     $basename = class_basename($class);
                     return [
                         __DIR__ . "/../database/seeders/$basename.php" => database_path("seeders/$basename.php"),

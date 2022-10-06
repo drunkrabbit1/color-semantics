@@ -4,7 +4,7 @@ namespace Drabbit\ColorSemantics\Models\Tests;
 
 use Drabbit\ColorSemantics\Models\Concept;
 use Drabbit\ColorSemantics\Models\Results\Result;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Drabbit\ColorSemantics\Traits\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;

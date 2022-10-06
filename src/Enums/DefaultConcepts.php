@@ -2,6 +2,11 @@
 
 namespace Drabbit\ColorSemantics\Enums;
 
+use Illuminate\Support\Collection;
+
+/**
+ * Дефолтные понятия
+ */
 enum DefaultConcepts: string
 {
     case I                          =  'Я';
@@ -36,7 +41,7 @@ enum DefaultConcepts: string
 
     public static function all(): \Illuminate\Support\Collection
     {
-        return collect(self::cases())
+        return Collection::make(self::cases())
             ->pluck('value')
             ->map(
                 fn($value) => ['title' => $value]
@@ -46,7 +51,6 @@ enum DefaultConcepts: string
     public static function getNegative(): \Illuminate\Support\Collection
     {
         return self::all()->whereIn('title', [
-            self::TROUBLE->value,
             self::TROUBLE->value,
             self::FAILURE->value,
             self::DISEASE->value,

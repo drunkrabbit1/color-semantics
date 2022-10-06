@@ -5,15 +5,17 @@ namespace Drabbit\ColorSemantics\Repositories;
 use Drabbit\ColorSemantics\Models\Results\Color;
 use Drabbit\ColorSemantics\Models\Results\Result;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Query\Builder;
 
 class ColorsConceptsRepository
 {
-    public function tableQuery(Result|null $result = null): Result|Collection| \Illuminate\Database\Eloquent\Builder
+    public function tableQuery(Result|Model|string|null $result = null): Result|Collection| \Illuminate\Database\Eloquent\Builder
     {
+        $resultId = is_string($result) ? $result : $result?->id;
         $resultQuery = Result::query();
-        if ($result) {
+        if ($resultId) {
             $resultQuery->where('id', $result->id);
         }
 

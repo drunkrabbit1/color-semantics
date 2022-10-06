@@ -3,7 +3,7 @@
 namespace Drabbit\ColorSemantics\Models;
 
 use Drabbit\ColorSemantics\Models\Results\ResultConceptPivot;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Drabbit\ColorSemantics\Traits\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -18,7 +18,7 @@ class Color extends Model
     public $incrementing = false;
     protected $keyType = 'string';
 
-    public function concepts()
+    public function concepts(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
     {
         return $this->belongsToMany(Concept::class, ResultConceptPivot::class);
     }

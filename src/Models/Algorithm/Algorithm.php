@@ -3,10 +3,9 @@
 namespace Drabbit\ColorSemantics\Models\Algorithm;
 
 use Drabbit\ColorSemantics\Models\Concept;
-use Drabbit\ColorSemantics\Traits\Uuids;
+use Drabbit\ColorSemantics\Traits\HasUuids;
 use Drabbit\ColorSemantics\Enums\AlgorithmType;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -47,26 +46,47 @@ class Algorithm extends Model
         'type' => AlgorithmType::class
     ];
 
+    /**
+     * Список под-алгоритмов
+     * @return HasOne
+     */
     public function note(): HasOne
     {
         return $this->hasOne(self::class, 'id', 'algorithm_id');
     }
 
+    /**
+     * Выводит алгоритм родителя
+     * @return HasOne
+     */
     public function parent(): HasOne
     {
         return $this->hasOne(self::class, 'algorithm_id', 'id');
     }
 
+    /**
+     * Вывод понятий
+     * @return BelongsToMany
+     */
     public function concepts(): BelongsToMany
     {
         return $this->belongsToMany(Concept::class, AlgorithmConcept::class,
              'algorithm_id', 'concept_id');
     }
 
-    public function scopeWhereNote(Builder $query, string $column, string $option = '=', mixed $value = null, string $boolean = 'and')
+    /**
+     * Производит where запрос по алгоритму и его под-алгоритмами
+     * @param Builder $query
+     * @param string $column
+     * @param string $option
+     * @param mixed|null $value
+     * @param string $boolean
+     * @return Builder
+     */
+    public function scopeWhereNote(Builder $query, string $column, string $option = '=', mixed $value = null, string $boolean = 'and'): Builder
     {
         $value = $value ?: $option;
-        $query->has('note', '>=', 1, $boolean, function (Builder $query) use ($column, $option, $value) {
+        return $query->has('note', '>=', 1, $boolean, function (Builder $query) use ($column, $option, $value) {
             $query->where($column, $option, $value);
             $query->orWhereHas('note', function (Builder $query) use ($column, $option, $value) {
                 $query->where($column, $option, $value);
@@ -83,17 +103,27 @@ class Algorithm extends Model
         });
     }
 
+    /**
+     * Производит where запрос по алгоритму и его алгоритмов-родителей
+     *
+     * @param Builder $query
+     * @param string $column
+     * @param string $option
+     * @param mixed|null $value
+     * @param string $boolean
+     * @return Builder
+     */
     public function scopeWhereParent(
         Builder $query,
         string $column,
         string $option = '=',
         mixed $value = null,
         string $boolean = 'and'
-    )
+    ): Builder
     {
         $value = $value ?: $option;
 
-        $query->has('parent', '>=', 1, $boolean, function (Builder $query) use ($column, $option, $value) {
+        return $query->has('parent', '>=', 1, $boolean, function (Builder $query) use ($column, $option, $value) {
             $query->where($column, $option, $value);
             $query->orWhereHas('parent', function (Builder $query) use ($column, $option, $value) {
                 $query->where($column, $option, $value);

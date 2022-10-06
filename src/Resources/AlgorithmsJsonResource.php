@@ -9,12 +9,12 @@ class AlgorithmsJsonResource extends JsonResource
 {
     public function toArray($request): Collection
     {
-        return collect([
+        return Collection::make([
             'id' => $this->id,
             'description' => $this->description,
             'point' => $this->point,
             'type' => $this->type,
-            'note' => collect($this->note()),
+            'note' => Collection::make($this->note()),
         ]);
     }
 

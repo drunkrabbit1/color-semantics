@@ -2,8 +2,7 @@
 
 namespace Drabbit\ColorSemantics\Models\Results;
 
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Drabbit\ColorSemantics\Traits\HasUuids;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
 class ResultColorPivot extends Pivot

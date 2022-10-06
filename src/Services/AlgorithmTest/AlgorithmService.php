@@ -39,10 +39,10 @@ class AlgorithmService extends BaseAlgorithmService
     {
         switch ($algorithm->get('type')) {
             case AlgorithmType::IF_ASPIRATION_ZONE:
-                $point =  $this->ifAspirationZone($algorithm);
+                $point = $this->ifAspirationZone($algorithm);
                 break;
             case AlgorithmType::IF_AVOIDANCE_ZONE:
-                $point =  $this->ifAvoidanceZone($algorithm);
+                $point = $this->ifAvoidanceZone($algorithm);
                 break;
             case AlgorithmType::IN_GROUP:
                 $this->isGroup = true;
@@ -50,15 +50,15 @@ class AlgorithmService extends BaseAlgorithmService
                 break;
             case AlgorithmType::SUMMATION:
                 $this->isSummation = true;
-                $point =  $this->summation($algorithm);
+                $point = $this->summation($algorithm);
                 break;
             case AlgorithmType::MISS:
                 $this->isMiss = true;
-                $point =  $this->miss($algorithm);
+                $point = $this->miss($algorithm);
                 break;
             case AlgorithmType::MULTIPLIED:
                 $this->isMultiplied = true;
-                $point =  $this->multiplied($algorithm);
+                $point = $this->multiplied($algorithm);
                 break;
             case AlgorithmType::PASSIVE:
             default:
@@ -129,23 +129,24 @@ class AlgorithmService extends BaseAlgorithmService
      */
     private function miss($algorithm): ?int
     {
-        if ($this->concepts->count() == 1)
+        if ($this->allConcepts->count() == 1)
             return (int) $algorithm->get('point');
 
         $this->status = false;
         return 0;
     }
 
+    /**
+     * Умножает совпадающие понятия на количество баллов
+     * @param $algorithm
+     * @return float|int
+     */
     private function multiplied($algorithm): float|int
     {
-//        dd($this->algorithms);
         if ($this->status) {
             // сумма всех алгоритмов, которые есть в концепции
-//            dd($this->mainAlgorithm, 'adas');
-
 //            $concepts = $this->mainAlgorithm->concepts()->whereIn('id', $this->concepts->pluck('id'));
 //            $concepts = $this->conceptsWhereAlgorithms($this->mainAlgorithm->get('id'), 'id');
-//            dd($this->concepts->toArray(), $this->isAspiration);
 //            $algorithmsSum = AlgorithmTest::query()
 //                ->has('concepts')
 //                ->whereHas('concepts', function($query) {$query->whereIn('id', $this->concepts->pluck('id'));})
@@ -155,7 +156,8 @@ class AlgorithmService extends BaseAlgorithmService
 //                ->where('type', AlgorithmType::IN_GROUP)
 //                ->get();
 
-            if ($algorithm->get('point') == 0) {
+            // если алгоритм не имеет point, то мы берем количество point алгоритма с типом IN_GROUP
+            if ($algorithm->get('point', 0) === 0) {
                 $algorithm = $this->algorithms
                     ->where('type', AlgorithmType::IN_GROUP)
                     ->firstWhere('point');
@@ -164,6 +166,7 @@ class AlgorithmService extends BaseAlgorithmService
             } else {
                 $point = $algorithm->get('point') * $this->concepts->count();
             }
+
             return (int) $point;
         }
 
@@ -179,9 +182,9 @@ class AlgorithmService extends BaseAlgorithmService
         // Добавляет дополнительные свойства Понятием, для доп. информации
         if ($this->status()) {
             $this->algorithms->each(
-                fn($algorithm) => $this->addConceptInfo($algorithm)
+                fn($algorithm) => $this->addInfoForConcepts($algorithm)
             );
-        } else {
+        } else { // дефолтные данные
             $concepts = $this->concepts->map(function (Collection $concept) {
                 $concept->offsetSet('point', 0);
                 $concept->offsetSet('withAlgorithm', null);
@@ -196,7 +199,15 @@ class AlgorithmService extends BaseAlgorithmService
         $this->addAlgorithmInfo();
     }
 
-    private function addConceptInfo($algorithm, $point = null): void
+    /**
+     * Изменяет свойства коллекции у Понятий,
+     * добавляя им дополнительную информацию,
+     * по проделанной работе.
+     * @param $algorithm
+     * @param $point
+     * @return void
+     */
+    private function addInfoForConcepts($algorithm, $point = null): void
     {
         switch ($algorithm->get('type')) {
             case AlgorithmType::MULTIPLIED:
@@ -228,7 +239,6 @@ class AlgorithmService extends BaseAlgorithmService
                                     $concept->offsetSet('point', $sumPoint);
 
                                     $concept->offsetSet('withAlgorithm', $algorithm);
-//                                    $concept->offsetSet('algorithms', $this->algorithms);
 
                                     return $concept;
                                 });
@@ -258,9 +268,13 @@ class AlgorithmService extends BaseAlgorithmService
         }
     }
 
+    /**
+     * Информация общих сведений по подсчету
+     * @return void
+     */
     private function addAlgorithmInfo(): void
     {
-        $this->algorithmsInfo->add(collect([
+        $this->algorithmsInfo->add(Collection::make([
             'status' => $this->status,
             'algorithms' => $this->algorithms,
             'concepts' => $this->concepts,

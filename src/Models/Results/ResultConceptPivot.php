@@ -3,7 +3,7 @@
 namespace Drabbit\ColorSemantics\Models\Results;
 
 use Drabbit\ColorSemantics\Models\Color;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Drabbit\ColorSemantics\Traits\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
